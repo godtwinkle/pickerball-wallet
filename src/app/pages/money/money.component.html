@@ -1,0 +1,15 @@
+<mat-dialog-content>
+    <mat-form-field>
+      <mat-label>Số tiền</mat-label>
+      <input type="number" matInput [(ngModel)]="money"   required />
+      <!-- @if(fullName.invalid){
+          <mat-error>{{errorMessage()}}</mat-error>
+      } -->
+    </mat-form-field>
+    
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button  (click)="onDepositToFund()">Đóng quỹ</button>
+    <button mat-button (click)="onCancel()">Huỷ</button>
+  </mat-dialog-actions>
+  

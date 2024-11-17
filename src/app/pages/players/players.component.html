@@ -1,0 +1,27 @@
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Tên thành viên</mat-label>
+    <input matInput [(ngModel)]="playerData.fullName" [formControl]="fullName" (blur)="updateErrorMessage()" required />
+    @if(fullName.invalid){
+        <mat-error>{{errorMessage()}}</mat-error>
+    }
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Ban</mat-label>
+    <input matInput [(ngModel)]="playerData.division" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Số điện thoại</mat-label>
+    <input matInput [(ngModel)]="playerData.phone" />
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Ngày sinh</mat-label>
+    <input matInput  [matDatepicker]="picker" [(ngModel)]="playerData.birthday" />
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button  (click)="onSavePlayer()">{{isEditMode?'Lưu':'Thêm'}}</button>
+  <button mat-button (click)="onCancel()">Huỷ</button>
+</mat-dialog-actions>
