@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MoneyComponent } from '../money/money.component';
 import { PlayersService } from '../players/players.service';
+import { TransactionsService } from '../transactions/transactions.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -43,13 +44,17 @@ export class HomeComponent implements OnInit {
   public defaultSortOrder: 'asc' | 'desc' = 'asc';
   private _snackBar = inject(MatSnackBar);
 
-  constructor(private service: PlayersService, private dialog: MatDialog) {}
+  constructor(
+    private playerService: PlayersService,
+    private transactionService: TransactionsService,
+    private dialog: MatDialog
+  ) {}
   ngOnInit(): void {
     this.updateDataSource();
   }
 
   updateDataSource() {
-    this.service.getPlayers().subscribe({
+    this.playerService.getPlayers().subscribe({
       next: (data) => {
         this.playersDataArray = data;
         this.dataSource = new MatTableDataSource<Player>(this.playersDataArray);
@@ -100,7 +105,7 @@ export class HomeComponent implements OnInit {
   }
 
   addPlayerSuccess(player: Player): void {
-    this.service.addPlayer(player).subscribe({
+    this.playerService.addPlayer(player).subscribe({
       next: () => {
         openSnackBar(this._snackBar, 'Thêm mới thành công', 'OK');
       },
@@ -111,7 +116,7 @@ export class HomeComponent implements OnInit {
   }
 
   updatePlayerSuccess(player: any): void {
-    this.service
+    this.playerService
       .updatePlayer(player.id, player)
       .then(() => {
         openSnackBar(this._snackBar, 'Cập nhật thành công', 'OK');
@@ -130,6 +135,7 @@ export class HomeComponent implements OnInit {
         const paid = parseInt(player.paid ?? 0) + parseInt(result ?? 0);
         player.paid = paid;
         this.updatePlayerSuccess(player);
+        this.transactionService;
       }
     });
   }
