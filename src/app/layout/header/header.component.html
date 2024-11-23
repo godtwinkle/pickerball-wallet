@@ -1,27 +1,57 @@
 <header>
-    <div class="navbar navbar-expand-lg justify-content-between">
-        <a class="navbar-brand" href="/"><svg width="40" height="40" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_327_24952)">
-            <rect width="512" height="512" />
-            <rect width="512" height="512" rx="96" fill="url(#paint0_linear_327_24952)"/>
-            <path d="M251.83 57H261.875C277.096 58.2908 291.893 64.9076 302.547 75.9501C343.891 117.397 385.387 158.714 426.817 200.086C433.782 207.256 441.571 213.84 446.746 222.518C451.921 230.783 454.828 240.285 456 249.929V261.926C454.503 276.309 448.308 290.226 438.1 300.552C392.937 345.774 347.72 390.953 302.514 436.143C291.004 447.793 274.904 454.778 258.501 454.973C241.632 455.472 224.632 448.931 212.634 437.032C169.771 394.186 126.908 351.328 84.0562 308.471C78.4691 302.82 72.4156 297.483 68.163 290.681C56.6852 273.152 54.7975 249.885 63.1726 230.686C66.5791 222.68 71.7213 215.467 78.0244 209.479C120.182 167.381 162.296 125.229 204.432 83.1201C209.9 77.7182 215.075 71.9041 221.562 67.6628C230.512 61.5558 241.1 58.1498 251.83 57ZM200.331 168.216C183.332 169.757 169.098 185.257 169.077 202.331C169.044 238.127 169.044 273.933 169.077 309.729C169.109 327.801 185.132 343.844 203.195 343.996C239.017 344.082 274.839 344.061 310.672 344.006C328.431 343.996 344.422 328.625 345.03 310.857C345.106 274.356 345.095 237.856 345.041 201.355C344.552 183.533 328.518 167.924 310.672 168.043C273.896 168.162 237.097 167.826 200.331 168.216Z" fill="white"/>
-            </g>
-            <defs>
-            <linearGradient id="paint0_linear_327_24952" x1="256" y1="0" x2="256" y2="512" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#FF9DA1"/>
-            <stop offset="1" stop-color="#E71C24"/>
-            </linearGradient>
-            <clipPath id="clip0_327_24952">
-            <rect width="512" height="512" fill="white"/>
-            </clipPath>
-            </defs>
-            </svg>
-            </a>
-            <!-- (click)="showPlayersDialog()" -->
-            <button mat-mini-fab (click)="fieldPayment()" > 
-                <mat-icon aria-hidden="false" title="Tính tiền" aria-label="Tính tiền" fontIcon="attach_money"></mat-icon>
-              </button>
-      
-       
-      </div>
+  <div class="navbar navbar-expand-lg justify-content-between">
+    <a class="navbar-brand" href="/"
+      ><svg
+        width="40"
+        height="40"
+        viewBox="0 0 512 512"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g clip-path="url(#clip0_327_24952)">
+          <rect width="512" height="512" />
+          <rect
+            width="512"
+            height="512"
+            rx="96"
+            fill="url(#paint0_linear_327_24952)"
+          />
+          <path
+            d="M251.83 57H261.875C277.096 58.2908 291.893 64.9076 302.547 75.9501C343.891 117.397 385.387 158.714 426.817 200.086C433.782 207.256 441.571 213.84 446.746 222.518C451.921 230.783 454.828 240.285 456 249.929V261.926C454.503 276.309 448.308 290.226 438.1 300.552C392.937 345.774 347.72 390.953 302.514 436.143C291.004 447.793 274.904 454.778 258.501 454.973C241.632 455.472 224.632 448.931 212.634 437.032C169.771 394.186 126.908 351.328 84.0562 308.471C78.4691 302.82 72.4156 297.483 68.163 290.681C56.6852 273.152 54.7975 249.885 63.1726 230.686C66.5791 222.68 71.7213 215.467 78.0244 209.479C120.182 167.381 162.296 125.229 204.432 83.1201C209.9 77.7182 215.075 71.9041 221.562 67.6628C230.512 61.5558 241.1 58.1498 251.83 57ZM200.331 168.216C183.332 169.757 169.098 185.257 169.077 202.331C169.044 238.127 169.044 273.933 169.077 309.729C169.109 327.801 185.132 343.844 203.195 343.996C239.017 344.082 274.839 344.061 310.672 344.006C328.431 343.996 344.422 328.625 345.03 310.857C345.106 274.356 345.095 237.856 345.041 201.355C344.552 183.533 328.518 167.924 310.672 168.043C273.896 168.162 237.097 167.826 200.331 168.216Z"
+            fill="white"
+          />
+        </g>
+        <defs>
+          <linearGradient
+            id="paint0_linear_327_24952"
+            x1="256"
+            y1="0"
+            x2="256"
+            y2="512"
+            gradientUnits="userSpaceOnUse"
+          >
+            <stop stop-color="#FF9DA1" />
+            <stop offset="1" stop-color="#E71C24" />
+          </linearGradient>
+          <clipPath id="clip0_327_24952">
+            <rect width="512" height="512" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>
+    </a>
+    <button mat-button [matMenuTriggerFor]="menu">Menu</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Item 1</button>
+      <button mat-menu-item>Item 2</button>
+    </mat-menu>
+    <!-- (click)="showPlayersDialog()" -->
+    <button mat-mini-fab (click)="fieldPayment()">
+      <mat-icon
+        aria-hidden="false"
+        title="Tính tiền"
+        aria-label="Tính tiền"
+        fontIcon="attach_money"
+      ></mat-icon>
+    </button>
+  </div>
 </header>

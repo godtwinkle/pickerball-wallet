@@ -7,6 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { TransactionsService } from '../../pages/transactions/transactions.service';
 import { ActivitiesComponent } from '../../pages/activities/activities.component';
+
+import { MatMenuModule } from '@angular/material/menu';
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -14,7 +16,7 @@ import { ActivitiesComponent } from '../../pages/activities/activities.component
     MatButtonModule,
     MatIconModule,
     // MatToolbarModule,
-
+    MatMenuModule,
     MatInputModule,
 
     MatDialogModule,
