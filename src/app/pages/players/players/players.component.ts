@@ -4,16 +4,20 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Player, PlayersComponent } from '../players/players.component';
+import {
+  Player,
+  PlayersFormComponent,
+} from '../players-form/players-form.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MoneyComponent } from '../money/money.component';
-import { PlayersService } from '../players/players.service';
-import { TransactionsService } from '../transactions/transactions.service';
+import { PlayersService } from '../players.service';
+import { TransactionsService } from '../../transactions/transactions.service';
+import { Transaction } from '../../transactions/transactions.component';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -31,10 +35,11 @@ import { TransactionsService } from '../transactions/transactions.service';
     CommonModule,
     MatMenuModule,
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './players.component.html',
+  styleUrl: './players.component.scss',
+  providers: [DatePipe],
 })
-export class HomeComponent implements OnInit {
+export class PlayersComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   playersDataArray: Player[] = [];
@@ -47,7 +52,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private playerService: PlayersService,
     private transactionService: TransactionsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private datePipe: DatePipe
   ) {}
   ngOnInit(): void {
     this.updateDataSource();
@@ -83,8 +89,11 @@ export class HomeComponent implements OnInit {
 
   showPlayersDialog(isEditMode: boolean, player?: Player): void {
     if (isEditMode) {
-      const dialogRef = this.dialog.open(PlayersComponent, {
+      const dialogRef = this.dialog.open(PlayersFormComponent, {
         width: '90%',
+        disableClose: false, // Focus sẽ được xử lý tự động
+        autoFocus: true, // Đảm bảo focus chuyển đến dialog
+        ariaLabel: 'playersEditForm', // Cải thiện Accessibility
         data: { player },
       });
       dialogRef.afterClosed().subscribe((result) => {
@@ -93,8 +102,11 @@ export class HomeComponent implements OnInit {
         }
       });
     } else {
-      const dialogRef = this.dialog.open(PlayersComponent, {
+      const dialogRef = this.dialog.open(PlayersFormComponent, {
         width: '90%',
+        disableClose: false, // Focus sẽ được xử lý tự động
+        autoFocus: true, // Đảm bảo focus chuyển đến dialog
+        ariaLabel: 'PlayerAddForm', // Cải thiện Accessibility
       });
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
@@ -129,13 +141,33 @@ export class HomeComponent implements OnInit {
   depositToFund(player: any): void {
     const dialogRef = this.dialog.open(MoneyComponent, {
       width: '90%',
+      disableClose: false, // Focus sẽ được xử lý tự động
+      autoFocus: true, // Đảm bảo focus chuyển đến dialog
+      ariaLabel: 'depositToFund', // Cải thiện Accessibility
     });
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        const paid = parseInt(player.paid ?? 0) + parseInt(result ?? 0);
+        const paid = player.paid + parseInt(result ?? 0);
         player.paid = paid;
         this.updatePlayerSuccess(player);
-        this.transactionService;
+
+        const now = this.datePipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
+
+        const transactions: Transaction = {
+          title: 'Đóng quỹ ngày ' + now,
+          activityID: '0',
+          amount: parseInt(result ?? 0),
+          playerID: player.id,
+          updatedAt: now,
+        };
+        this.transactionService.addTransactions(transactions).subscribe({
+          next: () => {
+            openSnackBar(this._snackBar, 'Cập nhật giao dịch thành công', 'OK');
+          },
+          error: (err) => {
+            console.error('Lỗi:', err);
+          },
+        });
       }
     });
   }

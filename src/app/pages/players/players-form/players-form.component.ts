@@ -43,14 +43,14 @@ import {
     ReactiveFormsModule,
     MatDatepickerModule,
   ],
-  templateUrl: './players.component.html',
-  styleUrl: './players.component.scss',
+  templateUrl: './players-form.component.html',
+  styleUrl: './players-form.component.scss',
   providers: [
     provideNativeDateAdapter(),
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
   ],
 })
-export class PlayersComponent {
+export class PlayersFormComponent {
   playerData: Player = {
     fullName: '',
     division: '',
@@ -66,7 +66,7 @@ export class PlayersComponent {
   isEditMode = false;
 
   constructor(
-    public dialogRef: MatDialogRef<PlayersComponent>,
+    public dialogRef: MatDialogRef<PlayersFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { player?: Player }
   ) {
     if (data?.player) {

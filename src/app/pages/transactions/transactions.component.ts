@@ -11,6 +11,8 @@ export class TransactionsComponent {}
 
 export interface Transaction {
   activityID: string;
-  amount: string;
-  description: string;
+  amount: number;
+  playerID: string;
+  title: string;
+  updatedAt: any;
 }

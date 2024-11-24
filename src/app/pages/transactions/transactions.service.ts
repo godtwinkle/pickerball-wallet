@@ -1,12 +1,14 @@
 import { inject, Injectable } from '@angular/core';
-import { collection, Firestore } from '@angular/fire/firestore';
+import { addDoc, collection, Firestore } from '@angular/fire/firestore';
+import { Transaction } from './transactions.component';
+import { from, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TransactionsService {
   firestore = inject(Firestore);
-  playersCollection = collection(this.firestore, 'transactions');
+  transactionsCollection = collection(this.firestore, 'transactions');
 
   // getPlayers(): Observable<Player[]> {
   //   return collectionData(this.playersCollection, {
@@ -14,13 +16,13 @@ export class TransactionsService {
   //   }) as Observable<Player[]>;
   // }
 
-  // addPlayer(player: Player): Observable<string> {
-  //   const promise = addDoc(this.playersCollection, player).then(
-  //     (response) => response.id
-  //   );
+  addTransactions(transactions: Transaction): Observable<string> {
+    const promise = addDoc(this.transactionsCollection, transactions).then(
+      (response) => response.id
+    );
 
-  //   return from(promise);
-  // }
+    return from(promise);
+  }
 
   // updatePlayer(playerId: string, playerData: Partial<Player>): Promise<void> {
   //   const playerDocRef = doc(this.firestore, `players/${playerId}`);

@@ -1,12 +1,13 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { PlayersComponent } from './pages/players/players.component';
+import { PlayersFormComponent } from './pages/players/players-form/players-form.component';
 import { TransactionsComponent } from './pages/transactions/transactions.component';
-import { ActivitiesComponent } from './pages/activities/activities.component';
+import { ActivitiesFormComponent } from './pages/activities/activities-form/activities-form.component';
+import { PlayersComponent } from './pages/players/players/players.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', component: PlayersComponent },
   { path: 'players', component: PlayersComponent },
+  { path: 'players-form', component: PlayersFormComponent },
   { path: 'transactions', component: TransactionsComponent },
-  { path: 'activities', component: ActivitiesComponent },
+  { path: 'activities', component: ActivitiesFormComponent },
 ];

@@ -7,8 +7,8 @@ import {
   addDoc,
   updateDoc,
 } from '@angular/fire/firestore';
-import { from, Observable } from 'rxjs';
-import { Player } from './players.component';
+import { from, map, Observable } from 'rxjs';
+import { Player } from './players-form/players-form.component';
 
 @Injectable({
   providedIn: 'root',

@@ -25,12 +25,12 @@ import {
   MAT_DATE_LOCALE,
   provideNativeDateAdapter,
 } from '@angular/material/core';
-import { Player } from '../players/players.component';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { PlayersService } from '../players/players.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ActivitiesService } from '../activities.service';
+import { PlayersService } from '../../players/players.service';
 @Component({
   selector: 'app-activities',
   standalone: true,
@@ -53,32 +53,32 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatSortModule,
     MatCheckboxModule,
   ],
-  templateUrl: './activities.component.html',
-  styleUrl: './activities.component.scss',
+  templateUrl: './activities-form.component.html',
+  styleUrl: './activities-form.component.scss',
   providers: [
     provideNativeDateAdapter(),
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
   ],
 })
-export class ActivitiesComponent implements OnInit {
+export class ActivitiesFormComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  playersDataArray: Player[] = [];
-  dataSource = new MatTableDataSource<Player>();
+  playersDataArray: PlayerFee[] = [];
+  dataSource = new MatTableDataSource<PlayerFee>();
   columnsToDisplay = ['fullName', 'waterFee'];
   public defaultSortColumn: string = 'fullName';
   public defaultSortOrder: 'asc' | 'desc' = 'asc';
-  totalFee: number = 0;
   activity: Activity = {
-    fieldFee: 0,
     participants: [],
     playDay: null,
     updatedAt: null,
-    waterFee: 0,
+    title: '',
+    totalFee: 0,
   };
 
   constructor(
-    public dialogRef: MatDialogRef<ActivitiesComponent>,
+    public dialogRef: MatDialogRef<ActivitiesFormComponent>,
+    public service: ActivitiesService,
     public playerService: PlayersService
   ) {}
 
@@ -94,10 +94,39 @@ export class ActivitiesComponent implements OnInit {
   }
 
   updateDataSource() {
+    // this.service.getParticipants().subscribe({
+    //   next: (data) => {
+    //     this.playersDataArray = data;
+    //     this.dataSource = new MatTableDataSource<PlayerFee>(
+    //       this.playersDataArray
+    //     );
+    //   },
+    //   error: (err) => {
+    //     console.log(err);
+    //   },
+    //   complete: () => {
+    //     this.dataSource.paginator = this.paginator;
+    //     this.dataSource.sort = this.sort;
+    //     this.dataSource.filterPredicate = function (
+    //       data,
+    //       filter: string
+    //     ): boolean {
+    //       return data.fullName.toLowerCase().includes(filter);
+    //     };
+    //     console.log('Đã cập nhật dữ liệu');
+    //   },
+    // });
     this.playerService.getPlayers().subscribe({
       next: (data) => {
-        this.playersDataArray = data;
-        this.dataSource = new MatTableDataSource<Player>(this.playersDataArray);
+        this.playersDataArray = data.map((player: any) => ({
+          id: player.id,
+          fullName: player.fullName,
+          waterCount: 0,
+        }));
+
+        this.dataSource = new MatTableDataSource<PlayerFee>(
+          this.playersDataArray
+        );
       },
       error: (err) => {
         console.log(err);
@@ -121,21 +150,33 @@ export class ActivitiesComponent implements OnInit {
     this.dataSource.filter = searchValue.trim().toLowerCase();
   }
 
-  participate(isChecked: boolean, id: string) {
-    if (isChecked) {
-      this.activity.participants.push(id);
-    } else {
+  participate(isChecked: boolean, playerFee: PlayerFee) {
+    if (!isChecked) {
       this.activity.participants = this.activity.participants.filter(
-        (x) => x != id
+        (participant) => participant.id !== playerFee.id
       );
+    } else {
+      if (
+        !this.activity.participants.some(
+          (participant) => participant.id === playerFee.id
+        )
+      ) {
+        this.activity.participants.push(playerFee);
+      }
     }
   }
 }
 
 export interface Activity {
-  fieldFee: number;
-  participants: string[];
+  participants: PlayerFee[];
   playDay: any;
   updatedAt: any;
-  waterFee: number;
+  title: string;
+  totalFee: number;
+}
+
+export interface PlayerFee {
+  id: string;
+  waterCount: number;
+  fullName: string;
 }
