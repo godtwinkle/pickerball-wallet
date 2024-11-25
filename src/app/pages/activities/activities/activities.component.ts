@@ -42,7 +42,7 @@ export class ActivitiesComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
   dataArray: Activity[] = [];
   dataSource = new MatTableDataSource<Activity>();
-  columnsToDisplay = ['title', 'playDay', 'updatedAt', 'totalFee', 'operation'];
+  columnsToDisplay = ['title', 'playDay', 'updatedAt', 'fieldFee', 'operation'];
   public defaultSortColumn: string = 'title';
   public defaultSortOrder: 'asc' | 'desc' = 'asc';
   private _snackBar = inject(MatSnackBar);
@@ -99,4 +99,6 @@ export class ActivitiesComponent implements OnInit {
       }
     });
   }
+
+  deleteActivity(activity: Activity) {}
 }

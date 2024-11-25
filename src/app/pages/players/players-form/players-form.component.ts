@@ -63,14 +63,12 @@ export class PlayersFormComponent {
 
   readonly fullName = new FormControl('', [Validators.required]);
   errorMessage = signal('');
-  isEditMode = false;
 
   constructor(
     public dialogRef: MatDialogRef<PlayersFormComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { player?: Player }
   ) {
     if (data?.player) {
-      this.isEditMode = true;
       this.playerData = {
         ...data.player,
         birthday: data.player.birthday

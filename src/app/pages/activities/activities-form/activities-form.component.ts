@@ -75,7 +75,9 @@ export class ActivitiesFormComponent implements OnInit {
     playDay: null,
     updatedAt: null,
     title: '',
+    fieldFee: 0,
     totalFee: 0,
+    waterFee: 0,
   };
 
   constructor(
@@ -84,7 +86,19 @@ export class ActivitiesFormComponent implements OnInit {
     public playerService: PlayersService,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: { activity?: Activity }
-  ) {}
+  ) {
+    if (data?.activity) {
+      this.activity = {
+        ...data.activity,
+        playDay: data.activity.playDay
+          ? new Date(data.activity.playDay.seconds * 1000)
+          : null,
+        updatedAt: data.activity.updatedAt
+          ? new Date(data.activity.updatedAt.seconds * 1000)
+          : null,
+      };
+    }
+  }
 
   ngOnInit(): void {
     this.updateDataSource();
@@ -94,9 +108,13 @@ export class ActivitiesFormComponent implements OnInit {
     this.dialogRef.close();
     this.closeDialog();
   }
-
   onSaveActivity(): void {
     this.dialogRef.close(this.activity);
+    this.closeDialog();
+  }
+  // Khi đóng popup chính, reset localStorage
+  closeDialog() {
+    localStorage.clear();
   }
 
   updateDataSource() {
@@ -125,11 +143,30 @@ export class ActivitiesFormComponent implements OnInit {
 
     this.playerService.getPlayers().subscribe({
       next: (data) => {
-        this.playersDataArray = data.map((player: any) => ({
-          id: player.id,
-          fullName: player.fullName,
-          waterFee: [],
-        }));
+        if (this.data.activity) {
+          this.playersDataArray = data.map((player: any) => ({
+            id: player.id,
+            fullName: player.fullName,
+            waterFee: [],
+          }));
+        } else {
+          data.forEach((player: any) => {
+            // Gọi phương thức getWaterFeeByPerson để lấy waterFee của player
+            this.service.getWaterFeeByPerson(player.id).subscribe({
+              next: (waterFeeData) => {
+                // Đưa dữ liệu vào mảng playersDataArray
+                this.playersDataArray.push({
+                  id: player.id,
+                  fullName: player.fullName,
+                  waterFee: waterFeeData, // Gắn waterFee từ dữ liệu trả về
+                });
+              },
+              error: (err) => {
+                console.error('Lỗi ', err);
+              },
+            });
+          });
+        }
 
         this.dataSource = new MatTableDataSource<PlayerFee>(
           this.playersDataArray
@@ -184,11 +221,6 @@ export class ActivitiesFormComponent implements OnInit {
       }
     });
   }
-
-  // Khi đóng popup chính, reset localStorage
-  closeDialog() {
-    localStorage.clear();
-  }
 }
 
 export interface Activity {
@@ -196,6 +228,8 @@ export interface Activity {
   playDay: any;
   updatedAt: any;
   title: string;
+  fieldFee: number;
+  waterFee: number;
   totalFee: number;
 }
 

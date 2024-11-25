@@ -12,6 +12,7 @@ import {
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { WaterFee } from '../activities-form/activities-form.component';
+import { ActivitiesService } from '../activities.service';
 
 @Component({
   selector: 'app-water-fee-form',
@@ -34,8 +35,23 @@ export class WaterFeeFormComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: { playerId: string },
-    private dialogRef: MatDialogRef<WaterFeeFormComponent>
+    private dialogRef: MatDialogRef<WaterFeeFormComponent>,
+    private service: ActivitiesService
   ) {
+    this.service.getWaterFeeByPerson(this.data.playerId).subscribe({
+      next: (waterFeeData) => {
+        if (waterFeeData.length > 0) {
+          localStorage.setItem(
+            this.data.playerId,
+            JSON.stringify(waterFeeData)
+          );
+        }
+      },
+      error: (err) => {
+        console.error('Lỗi ', err);
+      },
+    });
+
     // Lấy dữ liệu hiện có từ bộ nhớ tạm hoặc khởi tạo mới
     var waterFeeLocal = localStorage.getItem(data.playerId);
     if (waterFeeLocal) {

@@ -59,21 +59,38 @@ export class HeaderComponent {
   }
 
   paymentSuccess(activity: Activity): void {
+    const waterFeeTotal = activity.participants.reduce((total, participant) => {
+      // Duyệt qua mỗi participant, tính tổng quantity * price cho waterFee
+      const participantTotalFee = participant.waterFee.reduce(
+        (participantTotal, water) => {
+          return participantTotal + water.quantity * water.price;
+        },
+        0
+      );
+
+      // Cộng giá trị participantTotalFee vào waterFee chung
+      return total + participantTotalFee;
+    }, 0);
+
+    activity.waterFee = waterFeeTotal;
+    activity.totalFee = waterFeeTotal + activity.fieldFee;
+
     this.activitiesService.addActivity(activity).subscribe({
       next: (activityID) => {
         const transactions: Transaction[] = activity.participants.map(
           (participant) => {
-            // Tính tổng (price * quantity) trong waterFee
-            const waterFeeTotal = participant.waterFee
+            //Tính tổng (price * quantity) trong waterFee
+            const waterFeeOfPerson = participant.waterFee
               ? participant.waterFee.reduce(
                   (sum, wf) => sum + wf.price * wf.quantity,
                   0
                 )
               : 0;
 
-            //   Tính amount
+            //   Tổng số tiền của từng người
             const amount =
-              activity.totalFee / activity.participants.length + waterFeeTotal;
+              activity.fieldFee / activity.participants.length +
+              waterFeeOfPerson;
 
             this.playerService.getPaidById(participant.id).then((paid) => {
               this.playerService.updatePlayer(participant.id, {
