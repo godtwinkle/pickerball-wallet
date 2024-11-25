@@ -3,11 +3,12 @@ import { PlayersFormComponent } from './pages/players/players-form/players-form.
 import { TransactionsComponent } from './pages/transactions/transactions.component';
 import { ActivitiesFormComponent } from './pages/activities/activities-form/activities-form.component';
 import { PlayersComponent } from './pages/players/players/players.component';
+import { ActivitiesComponent } from './pages/activities/activities/activities.component';
 
 export const routes: Routes = [
   { path: '', component: PlayersComponent },
   { path: 'players', component: PlayersComponent },
   { path: 'players-form', component: PlayersFormComponent },
   { path: 'transactions', component: TransactionsComponent },
-  { path: 'activities', component: ActivitiesFormComponent },
+  { path: 'activities', component: ActivitiesComponent },
 ];

@@ -87,8 +87,8 @@ export class PlayersComponent implements OnInit {
     this.dataSource.filter = searchValue.trim().toLowerCase();
   }
 
-  showPlayersDialog(isEditMode: boolean, player?: Player): void {
-    if (isEditMode) {
+  showPlayersDialog(player?: Player): void {
+    if (player) {
       const dialogRef = this.dialog.open(PlayersFormComponent, {
         width: '90%',
         disableClose: false, // Focus sẽ được xử lý tự động
@@ -117,14 +117,14 @@ export class PlayersComponent implements OnInit {
   }
 
   addPlayerSuccess(player: Player): void {
-    this.playerService.addPlayer(player).subscribe({
-      next: () => {
-        openSnackBar(this._snackBar, 'Thêm mới thành công', 'OK');
-      },
-      error: (err) => {
-        console.error('Lỗi:', err);
-      },
-    });
+    this.playerService
+      .addPlayer(player)
+      .then(() => {
+        openSnackBar(this._snackBar, 'Tạo mới thành công', 'OK');
+      })
+      .catch((error) => {
+        console.error('Lỗi khi cập nhật dữ liệu:', error);
+      });
   }
 
   updatePlayerSuccess(player: any): void {
@@ -149,8 +149,16 @@ export class PlayersComponent implements OnInit {
       if (result) {
         const paid = player.paid + parseInt(result ?? 0);
         player.paid = paid;
-        this.updatePlayerSuccess(player);
 
+        this.playerService.getSpentById(player.id).then(
+          (spent) => {
+            player.balance = paid - spent;
+          },
+          (error) => {
+            console.error(`Lỗi`, error);
+          }
+        );
+        this.updatePlayerSuccess(player);
         const now = this.datePipe.transform(new Date(), 'dd/MM/yyyy HH:mm');
 
         const transactions: Transaction = {
@@ -160,6 +168,7 @@ export class PlayersComponent implements OnInit {
           playerID: player.id,
           updatedAt: now,
         };
+
         this.transactionService.addTransactions(transactions).subscribe({
           next: () => {
             openSnackBar(this._snackBar, 'Cập nhật giao dịch thành công', 'OK');

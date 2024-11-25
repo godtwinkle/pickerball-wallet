@@ -1,0 +1,25 @@
+<mat-dialog-content>
+    <div *ngFor="let fee of waterFees; let i = index">
+      <mat-form-field class="w-mf-p">
+        <mat-label>Mệnh giá</mat-label>
+        <input type="number" matInput [(ngModel)]="fee.price" />
+      </mat-form-field>
+      <mat-form-field class="w-mf-p">
+        <mat-label>Số lượng</mat-label>
+        <input type="number" matInput [(ngModel)]="fee.quantity" />
+      </mat-form-field>
+      <button mat-button  style="margin-right: 0;"  (click)="removeFee(i)">
+
+      <mat-icon aria-hidden="false" aria-label="RemoveWaterFee" fontIcon="remove"></mat-icon>
+</button>
+</div>
+<button mat-flat-button style="width: 100%;" (click)="addFee()">
+    <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="add"></mat-icon>
+
+</button>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button   (click)="save()">Hoàn thành</button>
+    <button mat-button (click)="closeDialog()" mat-dialog-close>Hủy</button>
+  </mat-dialog-actions>
+  

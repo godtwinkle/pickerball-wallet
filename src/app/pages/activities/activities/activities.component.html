@@ -1,12 +1,9 @@
 
 <div class="d-flex justify-content-between">
 
-    <button mat-fab  (click)="showPlayersDialog()">
-        <mat-icon aria-hidden="false" title="Thêm thành viên" aria-label="Thêm thành viên" fontIcon="person_add"></mat-icon>
-      </button>
-    
+  
 
-          <mat-form-field [hidden]="!playersDataArray">
+          <mat-form-field [hidden]="!dataArray">
             <input matInput #filter (keyup)="onSearch($event)"
                    placeholder="Nhập ...">
           </mat-form-field>
@@ -14,43 +11,43 @@
 
 <table mat-table [dataSource]="dataSource"
        class="mat-elevation-z8"
-       [hidden]="!playersDataArray"
+       [hidden]="!dataArray"
        matSort (matSortChange)="updateDataSource()"
        [matSortActive]="defaultSortColumn"
        [matSortDirection]="defaultSortOrder"
-       aria-label="member">
+       aria-label="activity">
 
  
 
   <!-- Name Column -->
-  <ng-container matColumnDef="fullName">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Họ tên</th>
-    <td mat-cell *matCellDef="let player">
-      <a >{{player.fullName}}</a>
+  <ng-container matColumnDef="title">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tiêu đề</th>
+    <td mat-cell *matCellDef="let activity">
+      <a >{{activity.title}}</a>
     </td>
   </ng-container>
 
-  <ng-container matColumnDef="division">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ban</th>
-    <td mat-cell *matCellDef="let player">
-      {{player.division}}
+  <ng-container matColumnDef="playDay">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ngày chơi</th>
+    <td mat-cell *matCellDef="let activity">
+      {{activity.playDay}}
     </td>
   </ng-container>
-  <ng-container matColumnDef="paid">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Đã đóng</th>
-    <td mat-cell *matCellDef="let player">
-        {{ player.paid | currency: 'VND':'symbol':'1.0-0' }}
+  <ng-container matColumnDef="updatedAt">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Ngày giao dịch</th>
+    <td mat-cell *matCellDef="let activity">
+        {{ activity.updatedAt }}
     </td>
   </ng-container>
-  <ng-container matColumnDef="balance">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header>Còn dư</th>
-    <td mat-cell *matCellDef="let player" [ngClass]="{'positiveBalance': player.balance > 0, 'negativeBalance': player.balance <= 0}">
-        {{ player.balance | currency: 'VND':'symbol':'1.0-0' }}
+  <ng-container matColumnDef="totalFee">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tiền sân</th>
+    <td mat-cell *matCellDef="let activity">
+        {{ activity.totalFee | currency: 'VND':'symbol':'1.0-0' }}
     </td>
   </ng-container>
   <ng-container matColumnDef="operation">
     <th mat-header-cell *matHeaderCellDef> Thao tác </th>
-    <td mat-cell *matCellDef="let player">
+    <td mat-cell *matCellDef="let activity">
       <!-- Menu Trigger Button -->
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>more_vert</mat-icon>
@@ -59,19 +56,19 @@
       <!-- Menu -->
       <mat-menu #menu="matMenu">
         <!-- Edit Option -->
-        <button mat-menu-item (click)="showPlayersDialog(player)">
+        <button mat-menu-item (click)="showActivityEdit(activity)">
           <mat-icon>edit</mat-icon>
           <span>Sửa</span>
         </button>
   
         <!-- Update Price Option -->
-        <button mat-menu-item (click)="depositToFund(player)">
+        <button mat-menu-item (click)="depositToFund(activity)">
           <mat-icon>assured_workload</mat-icon>
           <span>Đóng quỹ</span>
         </button>
   
         <!-- Delete Option -->
-        <button mat-menu-item (click)="deletePlayer(player)">
+        <button mat-menu-item (click)="deletePlayer(activity)">
           <mat-icon>delete</mat-icon>
           <span>Xóa</span>
         </button>

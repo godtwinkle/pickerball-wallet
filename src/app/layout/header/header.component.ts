@@ -16,6 +16,8 @@ import { ActivitiesService } from '../../pages/activities/activities.service';
 import { openSnackBar } from '../../pages/players/players/players.component';
 import { Transaction } from '../../pages/transactions/transactions.component';
 import { forkJoin } from 'rxjs';
+import { PlayersService } from '../../pages/players/players.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -37,19 +39,10 @@ export class HeaderComponent {
   constructor(
     private transactionsService: TransactionsService,
     private activitiesService: ActivitiesService,
-    private dialog: MatDialog
+    private playerService: PlayersService,
+    private dialog: MatDialog,
+    private router: Router
   ) {}
-
-  updateTransactionSuccess(transactions: any): void {
-    // this.service
-    //   .updatePlayer(player.id, player)
-    //   .then(() => {
-    //     openSnackBar(this._snackBar, 'Cập nhật thành công', 'OK');
-    //   })
-    //   .catch((error) => {
-    //     console.error('Lỗi khi cập nhật dữ liệu:', error);
-    //   });
-  }
 
   fieldPayment(): void {
     const dialogRef = this.dialog.open(ActivitiesFormComponent, {
@@ -69,13 +62,34 @@ export class HeaderComponent {
     this.activitiesService.addActivity(activity).subscribe({
       next: (activityID) => {
         const transactions: Transaction[] = activity.participants.map(
-          (participant) => ({
-            activityID: activityID, // ID của Activity
-            playerID: participant.id, // ID của Participant
-            amount: 0, // Giá trị số tiền (mặc định là '0', có thể thay đổi)
-            title: activity.title, // Tiêu đề từ Activity
-            updatedAt: activity.updatedAt, // Thời gian cập nhật từ Activity
-          })
+          (participant) => {
+            // Tính tổng (price * quantity) trong waterFee
+            const waterFeeTotal = participant.waterFee
+              ? participant.waterFee.reduce(
+                  (sum, wf) => sum + wf.price * wf.quantity,
+                  0
+                )
+              : 0;
+
+            //   Tính amount
+            const amount =
+              activity.totalFee / activity.participants.length + waterFeeTotal;
+
+            this.playerService.getPaidById(participant.id).then((paid) => {
+              this.playerService.updatePlayer(participant.id, {
+                spent: amount,
+                balance: paid - amount,
+              });
+            });
+
+            return {
+              activityID: activityID, // ID của Activity
+              playerID: participant.id, // ID của Participant
+              amount: amount, // Số tiền được tính toán
+              title: activity.title, // Tiêu đề từ Activity
+              updatedAt: activity.updatedAt, // Thời gian cập nhật từ Activity
+            };
+          }
         );
 
         const transactionRequests = transactions.map((transaction) =>
@@ -95,5 +109,12 @@ export class HeaderComponent {
         console.error('Lỗi tính phí', err);
       },
     });
+  }
+
+  navigateToPlayer() {
+    this.router.navigate(['/players']);
+  }
+  navigateToActivity() {
+    this.router.navigate(['/activities']);
   }
 }

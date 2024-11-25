@@ -6,6 +6,9 @@ import {
   Firestore,
   addDoc,
   updateDoc,
+  docData,
+  getDoc,
+  getDocs,
 } from '@angular/fire/firestore';
 import { from, map, Observable } from 'rxjs';
 import { Player } from './players-form/players-form.component';
@@ -23,16 +26,60 @@ export class PlayersService {
     }) as Observable<Player[]>;
   }
 
-  addPlayer(player: Player): Observable<string> {
-    const promise = addDoc(this.playersCollection, player).then(
-      (response) => response.id
-    );
-
-    return from(promise);
+  async addPlayer(player: Player): Promise<string> {
+    try {
+      const response = await addDoc(this.playersCollection, player);
+      return response.id;
+    } catch (error) {
+      console.error('Lỗi khi thêm player:', error);
+      throw error;
+    }
   }
 
-  updatePlayer(playerId: string, playerData: Partial<Player>): Promise<void> {
-    const playerDocRef = doc(this.firestore, `players/${playerId}`);
-    return updateDoc(playerDocRef, playerData);
+  async updatePlayer(
+    playerId: string,
+    playerData: Partial<Player>
+  ): Promise<void> {
+    try {
+      const playerDocRef = doc(this.firestore, `players/${playerId}`);
+      await updateDoc(playerDocRef, playerData);
+    } catch (error) {
+      console.error('Lỗi khi cập nhật player:', error);
+      throw error;
+    }
+  }
+
+  async getPaidById(idDocument: string): Promise<number> {
+    try {
+      // Lấy document cụ thể
+      const docRef = doc(this.firestore, 'players', idDocument);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        return docSnap.data()['paid'] as number;
+      } else {
+        console.error('Document không tồn tại');
+        return 0;
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy document:', error);
+      return 0;
+    }
+  }
+  async getSpentById(idDocument: string): Promise<number> {
+    try {
+      const docRef = doc(this.firestore, 'players', idDocument);
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        return docSnap.data()['spent'] as number;
+      } else {
+        console.error('Document không tồn tại');
+        return 0;
+      }
+    } catch (error) {
+      console.error('Lỗi khi lấy document:', error);
+      return 0;
+    }
   }
 }

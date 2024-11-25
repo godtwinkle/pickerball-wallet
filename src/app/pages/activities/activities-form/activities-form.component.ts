@@ -9,6 +9,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import {
   MAT_DIALOG_DATA,
+  MatDialog,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -31,6 +32,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ActivitiesService } from '../activities.service';
 import { PlayersService } from '../../players/players.service';
+import { WaterFeeFormComponent } from '../water-fee-form/water-fee-form.component';
 @Component({
   selector: 'app-activities',
   standalone: true,
@@ -79,14 +81,18 @@ export class ActivitiesFormComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ActivitiesFormComponent>,
     public service: ActivitiesService,
-    public playerService: PlayersService
+    public playerService: PlayersService,
+    private dialog: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data: { activity?: Activity }
   ) {}
 
   ngOnInit(): void {
     this.updateDataSource();
+    this.closeDialog();
   }
   onCancel(): void {
     this.dialogRef.close();
+    this.closeDialog();
   }
 
   onSaveActivity(): void {
@@ -116,12 +122,13 @@ export class ActivitiesFormComponent implements OnInit {
     //     console.log('Đã cập nhật dữ liệu');
     //   },
     // });
+
     this.playerService.getPlayers().subscribe({
       next: (data) => {
         this.playersDataArray = data.map((player: any) => ({
           id: player.id,
           fullName: player.fullName,
-          waterCount: 0,
+          waterFee: [],
         }));
 
         this.dataSource = new MatTableDataSource<PlayerFee>(
@@ -165,6 +172,23 @@ export class ActivitiesFormComponent implements OnInit {
       }
     }
   }
+  openWaterFeeDialog(player: PlayerFee) {
+    const dialogRef = this.dialog.open(WaterFeeFormComponent, {
+      width: '90%',
+      data: { playerId: player.id },
+    });
+
+    dialogRef.afterClosed().subscribe((result: WaterFee[]) => {
+      if (result) {
+        player.waterFee = result;
+      }
+    });
+  }
+
+  // Khi đóng popup chính, reset localStorage
+  closeDialog() {
+    localStorage.clear();
+  }
 }
 
 export interface Activity {
@@ -177,6 +201,11 @@ export interface Activity {
 
 export interface PlayerFee {
   id: string;
-  waterCount: number;
+  waterFee: WaterFee[];
   fullName: string;
+}
+
+export interface WaterFee {
+  price: number;
+  quantity: number;
 }

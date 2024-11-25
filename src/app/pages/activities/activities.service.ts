@@ -34,7 +34,11 @@ export class ActivitiesService {
       })
     );
   }
-
+  getActivities(): Observable<Activity[]> {
+    return collectionData(this.activitiesCollection, {
+      idField: 'id',
+    }) as Observable<Activity[]>;
+  }
   addActivity(activity: Activity): Observable<string> {
     const promise = addDoc(this.activitiesCollection, activity).then(
       (response) => response.id

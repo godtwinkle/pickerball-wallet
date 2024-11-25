@@ -39,10 +39,13 @@
         </defs>
       </svg>
     </a>
-    <button mat-button [matMenuTriggerFor]="menu">Menu</button>
+    <button mat-fab [matMenuTriggerFor]="menu">
+
+        <mat-icon>menu</mat-icon>
+    </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item>Item 1</button>
-      <button mat-menu-item>Item 2</button>
+      <button (click)="navigateToPlayer()" mat-menu-item>Người chơi</button>
+      <button (click)="navigateToActivity()" mat-menu-item>Thanh toán</button>
     </mat-menu>
     <!-- (click)="showPlayersDialog()" -->
     <button mat-mini-fab (click)="fieldPayment()">
